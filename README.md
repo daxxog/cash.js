@@ -1,4 +1,4 @@
 cash.js
 =======
 
-Currency transaction safe object for JavaScript.
+Transaction safe currency object for JavaScript.
