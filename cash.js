@@ -5,8 +5,39 @@
  * http://www.apache.org/licenses/LICENSE-2.0.html  
  */ var Cash = {};
 
+Cash = function(mixed, cents) { //Cash constructor
+    switch(typeof mixed) {
+        case 'object':
+            if(mixed instanceof Array) { //array containing arguments
+                cents = mixed[1]; //parse
+                mixed = mixed[0]; //^
+                return new Cash(mixed, cents); //^
+            } else { //object with\without functions
+                this.dec = mixed.dec;
+                this.a = mixed.a;
+                this.b = mixed.b;
+            }
+          break;
+        case 'string': //a string of JSON
+            mixed = JSON.parse(mixed); //parse
+            return new Cash(mixed); //^
+        case 'number': //two number arguments
+            this.dec = cents.toString().strip(['-', '.']).length; //length of cents
+            this.a = mixed;
+            this.b = cents;
+          break;
+    }
+};
 
-Cash._strproto = String.prototype; //save String.prototype
+Cash._strproto = function ___(cp) { //save String.prototype
+    var _to = {}; //create a temp object to hold the functions
+    
+    for(var val in cp) {
+        _to[val] = cp[val]; //grab functions from String.prototype
+    }
+    
+    return _to;
+}(String.prototype);
 
 /**
  * ReplaceAll by Fagner Brack (MIT Licensed)
@@ -49,31 +80,21 @@ String.prototype.repeat = function(x) { //like "ruby" * 2   -   "javascript".rep
     return _new;
 };
 
-String.prototype = Cash._strproto; //return String.prototype to it's original state
-delete Cash._strproto; //remove the evidence
-
-Cash = function(mixed, cents) { //Cash constructor
-    switch(typeof mixed) {
-        case 'object':
-            if(mixed instanceof Array) { //array containing arguments
-                cents = mixed[1]; //parse
-                mixed = mixed[0]; //^
-                return new Cash(mixed, cents); //^
-            } else { //object with\without functions
-                this.dec = mixed.dec;
-                this.a = mixed.a;
-                this.b = mixed.b;
-            }
-          break;
-        case 'string': //a string of JSON
-            mixed = JSON.parse(mixed); //parse
-            return new Cash(mixed); //^
-        case 'number': //two number arguments
-            this.dec = cents.toString().strip(['-', '.']).length; //length of cents
-            this.a = mixed;
-            this.b = cents;
-          break;
+Cash.killme = function(cb) { //self destruct (useful for returning String.prototype back to normal)
+    var val;
+    
+    for(val in String.prototype) { //delete all functions in String.prototype
+        delete String.prototype[val];
     }
+    
+    for(val in Cash._strproto) { //restore String.prototype to it's original state
+        String.prototype[val] = Cash._strproto[val];
+    }
+
+    setTimeout(function() {
+        Cash = undefined; //kill Cash
+        setTimeout(cb, 1); //call the callback
+    }, 250); //in the future
 };
 
 Cash.validate = function(cash) { //if cash.dec,a,b are all a numbers..
