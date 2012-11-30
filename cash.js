@@ -49,6 +49,8 @@ String.prototype.repeat = function(x) { //like "ruby" * 2   -   "javascript".rep
     return _new;
 };
 
+String.prototype = Cash._strproto; //return String.prototype to it's original state
+delete Cash._strproto; //remove the evidence
 
 Cash = function(mixed, cents) { //Cash constructor
     switch(typeof mixed) {
@@ -146,6 +148,3 @@ Cash.prototype.min = function(dec) {
         return new Cash('['+this.toNumber().toFixed(dec).replace('.', ',')+']'); //return a new Cash object limited to dec
     }
 };
-
-
-String.prototype = Cash._strproto; //return String.prototype to it's original state
