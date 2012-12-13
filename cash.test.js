@@ -251,5 +251,127 @@ Cash.prototype.ms = function() { //function to get Cash object clone with a safe
 };
 
 // (end of file)
+console.log("cash.js tests: ");
+
+console.log("new Cash();");
+var cash = [
+    new Cash("[1,0]"),
+    new Cash([1,001]),
+    new Cash(1,99),
+    new Cash(12,50),
+    new Cash([16,75]),
+    new Cash({
+        a: 21,
+        b: 888,
+        dec: 3
+    })
+];
+console.log(cash);
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log("cash.add(33,2);");
+cash.forEach(function(v, i, a) {
+    cash[i] = v.add(33,2);
+});
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log("cash.sub(33,2);");
+cash.forEach(function(v, i, a) {
+    cash[i] = v.sub(33,2);
+});
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log("cash.invert();");
+cash.forEach(function(v, i, a) {
+    cash[i] = v.invert();
+});
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log("cash.invert();");
+cash.forEach(function(v, i, a) {
+    cash[i] = v.invert();
+});
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log("cash.clone();");
+var c = new Cash(1,99);
+console.log(c);
+var x = c.clone();
+c.a = 0;
+c.b = 0;
+c.dec = 0;
+console.log(c);
+console.log(x);
+
+console.log("cash.d(10);");
+cash.forEach(function(v, i, a) {
+    cash[i] = v.d(10);
+});
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log("cash.d(2);");
+cash.forEach(function(v, i, a) {
+    cash[i] = v.d(2);
+});
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log("Cash.automin(2);");
+Cash.automin(2);
+
+console.log("cash.add(33,222);");
+cash.forEach(function(v, i, a) {
+    cash[i] = v.add(33,222);
+});
+
+console.log("cash.toNumber();");
+cash.forEach(function(v, i, a) {
+    console.log(v.toNumber());
+});
+
+console.log('Cash.parse("$12.045");');
+console.log(Cash.parse("$12.045").toNumber());
+
+console.log('Cash.parse("12.4$$5");');
+console.log(Cash.parse("12.4$$5").toNumber());
+
+console.log('Cash.parse("1,245$");');
+console.log(Cash.parse("1,245$").toNumber());
+
+console.log('Cash.parse("$1,000,000");');
+console.log(Cash.parse("$1,000,000").toNumber());
+
+
+console.log('new Cash();');
+console.log(new Cash());
+
+//
 
 //

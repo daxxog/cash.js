@@ -1,1 +1,5 @@
-cash.js -o --auto
+cash.src.js -o cash.min.js
+cash.src.js umd -o cash.umd.min.js
+cash.src.js umd --nominify -o cash.umd.js
+cash.src.js test --nominify -o cash.test.js
+cash.src.js --nominify -o cash.js
