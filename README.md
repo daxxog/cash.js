@@ -3,6 +3,12 @@ cash.js
 
 Transaction safe currency object for JavaScript.
 
+npm Install
+-----------
+```bash
+npm install https://github.com/daxxog/cash.js/tarball/master
+```
+
 Usage
 -------------
 ```javascript

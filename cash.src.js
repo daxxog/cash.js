@@ -23,6 +23,17 @@
 }(this, function() {
 //{{/umd}}
 
+//{{^umd}}
+//prototype forEach function for those certain browsers
+if(!Array.prototype.forEach) { //from: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/forEach
+    Array.prototype.forEach = function(fn, scope) {
+        for (var i = 0, len = this.length; i < len; ++i) {
+            fn.call(scope, this[i], i, this);
+        }
+    };
+}
+//{{/umd}}
+
 var Cash = {};
 
 Cash = function(mixed, cents) { //Cash constructor
@@ -85,14 +96,6 @@ String.prototype.replaceAll = function(token, newToken, ignoreCase) {
     }
     return str;
 };
-
-if(!Array.prototype.forEach) { //from: https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/forEach
-    Array.prototype.forEach = function(fn, scope) {
-        for (var i = 0, len = this.length; i < len; ++i) {
-            fn.call(scope, this[i], i, this);
-        }
-    }
-}
 
 String.prototype.strip = function(a) { //strip an array of strings from a string
     var _new  = this; //clone me
