@@ -67,6 +67,14 @@ Cash._strproto = function ___(cp) { //save String.prototype
     return _to;
 }(String.prototype);
 
+Cash.prototype.toObject = function() { //turn this Cash object into a regular object
+    return {
+        "a": this.a,
+        "b": this.b,
+        "dec": this.dec
+    };
+};
+
 /**
  * ReplaceAll by Fagner Brack (MIT Licensed)
  * Replaces all occurrences of a substring in a string
