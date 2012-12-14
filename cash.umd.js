@@ -126,11 +126,29 @@ Cash._parse = function(val) { //pre-parser for strings/numbers
     return _parse;
 };
 
-Cash.parsable = function(val) { //can we even parse this value?
-    return Cash.isNUM(Cash._parse(val)); //check if the output of _parse is a valid number
+Cash._parseMode = {
+    strict: false
 };
 
-Cash.parse = function(val) { //parse some cash from a string like "$2.50" or "25c" or "1,200" or "$1,000,000"
+Cash.parseMode = function(mode) {
+    if(typeof mode == 'undefined') {
+        return Cash._parseMode;
+    } else {
+        Cash._parseMode = mode;
+    }
+};
+
+Cash.parsable = function(val) { //can we even parse this value?
+    var _p = Cash._parse(val);
+    var _q = _p.split(".");
+    if((typeof _q[1] != 'undefined') && (Cash.parseMode().strict === true)) {
+        return Cash.isNUM(_p) && (_q[1].length <= Cash.automin()); //check if the output of _parse is a valid number and check if it is the correct number of decimals
+    } else {
+        return Cash.isNUM(_p); //check if the output of _parse is a valid number
+    }
+};
+
+Cash.parseToJSON = function(val) {
     if(Cash.parsable(val)) {
         var _p = Cash._parse(val.toString()).split("."); //parse: string -> better string -> array
         var _n = Cash.isNUM(parseInt(_p[1], 10)); //if _p[1] is a number
@@ -140,7 +158,19 @@ Cash.parse = function(val) { //parse some cash from a string like "$2.50" or "25
             : 0 //B=0 if _p[1]==NaN
         ).toString()) + ']').replace('.', ',').replace('NaN', '0');
         
-        return new Cash(_q).d(_n ? (_p[1].length) : 1); //make cash object from JSON
+        return {
+            json: _q,
+            dec: _n ? (_p[1].length) : 1
+        };
+    } else {
+        return -1; //parse error, just return -1
+    }
+};
+
+Cash.parse = function(val) { //parse some cash from a string like "$2.50" or "25c" or "1,200" or "$1,000,000"
+    if(Cash.parsable(val)) {
+        var _o = Cash.parseToJSON(val);
+        return new Cash(_o.json).d(_o.dec).ms(); //make cash object from JSON
     } else {
         return -1; //parse error, just return -1
     }
@@ -250,18 +280,22 @@ Cash.prototype.min = function(dec) {
         } else if(this.dec<dec) {
             return this;  //<, return current state
         } else if(this.dec>dec) {
-            return new Cash('['+this.toNumber().toFixed(dec).replace('.', ',')+']'); //return a new Cash object limited to dec
+            return new Cash(Cash.parseToJSON(this.toNumber().toFixed(dec)).json); //return a new Cash object limited to dec
         }
     }
 };
 
 Cash._automin = false;
 Cash.automin = function(dec) { //use min decimal places before all operations on everything. dec=false to disable
-    this._automin = dec;
+    if(typeof dec == 'undefined') {
+        return Cash._automin;
+    } else {
+        this._automin = dec;
+    }
 };
 
 Cash.prototype.ms = function() { //function to get Cash object clone with a safe decimal place
-    if(Cash._automin !== false) { //if we want to use automin
+    if(Cash.automin() !== false) { //if we want to use automin
         return this.min(Cash._automin);
     } else {
         return this.clone(); //just return a clone of this
