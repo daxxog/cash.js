@@ -138,7 +138,7 @@ Cash.parse = function(val) { //parse some cash from a string like "$2.50" or "25
         (_n ? 
             parseInt(_p[1], 10) 
             : 0 //B=0 if _p[1]==NaN
-        ).toString()) + ']').replace('.', ',');
+        ).toString()) + ']').replace('.', ',').replace('NaN', '0');
         
         return new Cash(_q).d(_n ? (_p[1].length) : 1); //make cash object from JSON
     } else {
