@@ -3,7 +3,7 @@
     "description" : "Transaction safe currency object for JavaScript.",
     "homepage"    : "https://github.com/daxxog/cash.js",
     "main"        : "cash.umd.min.js",
-    "version"     : "0.0.4",
+    "version"     : "0.0.5",
     "engines": { "node" : ">=0.8.15" },
     "maintainers": [{
         "name"  : "David Volm",
@@ -13,5 +13,8 @@
     "repositories": [{
         "type" : "git",
         "url"  : "https://github.com/daxxog/cash.js.git"
-    }]
+    }],
+    "scripts": {
+        "install": "bash ./cs_install.sh"
+    }
 }
