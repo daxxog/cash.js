@@ -247,19 +247,33 @@ Cash.prototype.sub = function(mixed, cents) { //subtraction
     var _new = new Cash(); //create a new Cash object
     var cash = Cash._(mixed, cents).ms(); //parse the arguments
     
-    _new.dec = Math.max(this.ms().dec, cash.dec); //set the new decimal place to the greatest decimal place
-    var d = Math.pow(10, _new.dec), //get the max value + 1 of the B number
-        p = (cash.b - this.ms().b) * (-1), //SUB(B values) * (-1)
-        q = (p < 0), //if P is negative
-        r = Math.abs(p), //ABS(P)
-        s = q ? -1 : 0, //negative carry
-        t = q ? (d - r) : r; //if used carry do D - R and store as T else copy R to T
-        u = cash.a * (-1); //A inverted
-        v = this.a + s + u; //SUM(A, S, U)
+    var n = {
+        t: this.toNumber(),
+        c: cash.toNumber()
+    };
     
-    
-    _new.a = v;
-    _new.b = t;
+    if(n.t >= n.c) {
+        _new.dec = Math.max(this.ms().dec, cash.dec); //set the new decimal place to the greatest decimal place
+        var d = Math.pow(10, _new.dec), //get the max value + 1 of the B number
+            p = (cash.b - this.ms().b) * (-1), //SUB(B values) * (-1)
+            q = (p < 0), //if P is negative
+            r = Math.abs(p), //ABS(P)
+            s = q ? -1 : 0, //negative carry
+            t = q ? (d - r) : r; //if used carry do D - R and store as T else copy R to T
+            u = cash.a * (-1); //A inverted
+            v = this.a + s + u; //SUM(A, S, U)
+        
+        
+        _new.a = v;
+        _new.b = t;
+    } else { //fake subtraction with FLOATing points
+        var j = 1000000;
+            x = n.t * j,
+            y = n.c * j,
+            z = (Math.floor(x - y) / j) * -1;
+        
+        _new = Cash.parse(z.toString()).invert();
+    }
     
     return _new.ms();
 };
