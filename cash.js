@@ -226,17 +226,34 @@ Cash.prototype.d = function(val) { //change the decimal place
     return _new; //return the clone
 };
 
+Cash.prototype.BIG_NUMBER = 1000000;
+
 Cash.prototype.add = function(mixed, cents) { //addition
-    var _new = new Cash(); //create a new Cash object
-    var cash = Cash._(mixed, cents).ms(); //parse the arguments
     
+    var _new = new Cash(), //create a new Cash object
+        cash = Cash._(mixed, cents).ms(), //parse the arguments
+        n = { //numbers
+            t: this.toNumber(),
+            c: cash.toNumber()
+        };
+    
+    /* OLD ALGOrithm
     _new.dec = Math.max(this.ms().dec, cash.dec); //set the new decimal place to the greatest decimal place
     var d = Math.pow(10, _new.dec); //get the max value + 1 of the B number
     var p = (this.ms().b + cash.b); //add the B numbers and store as temp P
     _new.a = this.a + cash.a + Math.floor(p / d); //new A number = SUM(all A numbers) + floor(P / D)
     _new.b = p % d; //new B number = P mod D
+    */
     
-    return _new; //return the new Cash object
+    //fake addition with FLOATing points
+    var j = Cash.prototype.BIG_NUMBER,
+        x = Math.floor(n.t * j),
+        y = Math.floor(n.c * j),
+        z = (Math.floor(x + y) / j) * -1;
+    
+    _new = Cash.parse(z.toString()).invert();
+    
+    return _new.ms(); //return the new Cash object
 };
 
 Cash.prototype.invert = function() {
@@ -244,38 +261,45 @@ Cash.prototype.invert = function() {
 };
 
 Cash.prototype.sub = function(mixed, cents) { //subtraction
-    var _new = new Cash(); //create a new Cash object
-    var cash = Cash._(mixed, cents).ms(); //parse the arguments
+    var _new = new Cash(), //create a new Cash object
+        _flo = _new, //dupe it
+        cash = Cash._(mixed, cents).ms(), //parse the arguments
+        uf = this.dec !== cash.dec; //using flo?
     
     var n = {
         t: this.toNumber(),
         c: cash.toNumber()
     };
     
-    if(n.t >= n.c) {
-        _new.dec = Math.max(this.ms().dec, cash.dec); //set the new decimal place to the greatest decimal place
+    if(!uf) {
+        //ALGOrithm based subtraction
+        _new.dec = this.ms().dec; //set the new decimal place to the greatest decimal place
         var d = Math.pow(10, _new.dec), //get the max value + 1 of the B number
             p = (cash.b - this.ms().b) * (-1), //SUB(B values) * (-1)
             q = (p < 0), //if P is negative
             r = Math.abs(p), //ABS(P)
             s = q ? -1 : 0, //negative carry
-            t = q ? (d - r) : r; //if used carry do D - R and store as T else copy R to T
-            u = cash.a * (-1); //A inverted
+            t = q ? (d - r) : r, //if used carry do D - R and store as T else copy R to T
+            u = cash.a * (-1), //A inverted
             v = this.a + s + u; //SUM(A, S, U)
-        
         
         _new.a = v;
         _new.b = t;
-    } else { //fake subtraction with FLOATing points
-        var j = 1000000;
-            x = n.t * j,
-            y = n.c * j,
+    } else {
+        //fake subtraction with FLOATing points
+        var j = Cash.prototype.BIG_NUMBER,
+            x = Math.floor(n.t * j),
+            y = Math.floor(n.c * j),
             z = (Math.floor(x - y) / j) * -1;
         
-        _new = Cash.parse(z.toString()).invert();
+        _flo = Cash.parse(z.toString()).invert();
     }
     
-    return _new.ms();
+    if(uf) {
+        return _flo.ms();
+    } else {
+        return _new.ms();
+    }
 };
 
 Cash.prototype.min = function(dec) {
