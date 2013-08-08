@@ -18,7 +18,7 @@
         define(factory);
     } else {
         // Browser globals (root is window)
-        root.returnExports = factory();
+        root.Cash = factory();
   }
 }(this, function() {
 //{{/umd}}
